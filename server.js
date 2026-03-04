@@ -46,6 +46,7 @@ con.getConnection((err, con) => {
     console.log("Banco de Dados conectado com sucesso!")
     con.release()
 })
+
 // Mensagens respostas padrão
 const msg = {
 
