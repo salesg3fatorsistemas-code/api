@@ -30,7 +30,15 @@ app.get('/:tabela/:id_entidade/codigo', async(req, res) => {
     res.send(data)
 })
 
+app.get('/:tabela/:id_registro/consultar', async(req, res) => {
 
+    let [data] = await con.promise().execute(
+        `SELECT * FROM ${req.params.tabela} WHERE ID_${req.params.tabela} = ?`,
+        [req.params.id_registro]
+    )
+
+    res.send(data)
+})
 
 app.post('/:tabela/:id_entidade/insert', async(req, res) => {
 
