@@ -70,3 +70,63 @@ app.post('/:tabela/:id_entidade/insert', async(req, res) => {
         return
     }
 })
+
+app.put('/:tabela/:id_entidade/update', async(req, res) => {
+    try {
+        
+        let idRegistro = req.body['ID_' + req.params.tabela];
+
+        let dados = { ...req.body };
+        delete dados['ID_' + req.params.tabela];
+
+        let chaves = Object.keys(dados);
+        let valores = Object.values(dados);
+
+        let strSet = chaves.map(chave => `${chave} = ?`).join(', ');
+
+        let sql = `UPDATE ${req.params.tabela} SET ${strSet} WHERE ID_ENTIDADE = ? AND ${'ID_' + req.params.tabela} = ?`;
+
+        let parametros = [...valores, req.params.id_entidade, idRegistro];
+
+        let [data] = await con.promise().execute(sql, parametros);
+
+        res.send({
+            sucesso: true,
+            mensagem: "Registro Atualizado com Sucesso!"
+        });
+
+    } catch(err) {
+        console.log(err);
+        res.send({
+            sucesso: false,
+            mensagem: "Erro interno ao atualizar o registro!"
+        });
+    }
+});
+
+app.delete('/:tabela/:id_registro/delete', async(req, res) => {
+    try {
+        let sql = `DELETE FROM ${req.params.tabela} WHERE ${'ID_' + req.params.tabela} = ?`;
+        
+        await con.promise().execute(sql, [req.params.id_registro]);
+
+        res.send({ sucesso: true, mensagem: "Registro excluído com sucesso!" });
+    } catch(err) {
+        console.log(err);
+        res.send({ sucesso: false, mensagem: "Erro interno ao excluir!" });
+    }
+});
+
+app.post('/:tabela/:id_entidade/lookup', async(req, res) => {
+    try {
+        let sql = `SELECT ID_${req.params.tabela}, ${ req.body.colunas.join(', ')}
+        FROM ${req.params.tabela} WHERE ID_ENTIDADE = ? AND SN_ATIVO = 1`;
+        
+        let [data] = await con.promise().execute(sql, [req.params.id_entidade]);
+        
+        res.send(data);
+    } catch(err) {
+        console.log(err);
+        res.send({ sucesso: false, mensagem: "Erro interno ao buscar dados do lookup!" });
+    }
+});
