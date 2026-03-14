@@ -38,7 +38,8 @@ const con = mysql.createPool({
     port: process.env.DBPORT    ,
     user: process.env.DBUSER    ,
     password: process.env.DBPASS,
-    database: process.env.DBDATA
+    database: process.env.DBDATA,
+    charset: 'utf8mb4_0900_ai_ci'
 })
 
 con.getConnection((err, con) => {

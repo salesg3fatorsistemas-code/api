@@ -6,7 +6,7 @@ app.post('/:tabela/:id_entidade/grid', async(req, res) => {
     
     let sqlBusca = colunas.map(coluna => `${coluna.field} LIKE ?`).join(' OR ');
 
-    let sql = `SELECT * FROM ${req.params.tabela} WHERE ID_ENTIDADE = ? AND (${sqlBusca})`;
+    let sql = `SELECT * FROM GRID_${req.params.tabela} WHERE ID_ENTIDADE = ? AND (${sqlBusca})`;
 
     let valores = [req.params.id_entidade];
     colunas.forEach(() => valores.push(`%${req.body.termo}%`));
